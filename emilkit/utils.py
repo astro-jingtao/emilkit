@@ -1,5 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.path import Path
+import matplotlib.patches as patches
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 
@@ -48,3 +50,13 @@ def imshow(data,
     im = ax.imshow(data, origin='lower', cmap=cmap, *arg, **kwarg)
     fig.colorbar(im, ax=ax, cax=cax, extend=extend)
     fig.sca(ax)  # 把当前 axis 设为 ax
+
+def plot_polygon(pts, ax=None, *arg, **kwarg):
+    if ax is None:
+        ax = plt.gca()
+    pts = np.vstack((pts, pts[:1]))
+    codes = np.ones(pts.shape[0]) * Path.LINETO
+    codes[0] = Path.MOVETO
+    path = Path(pts, codes)
+    patch = patches.PathPatch(path, *arg, **kwarg)
+    ax.add_patch(patch)

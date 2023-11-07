@@ -93,10 +93,12 @@ def get_line_info_all(sps, vac_wave=False):
     res = {
         name: {
             data_type: np.zeros((42, 42))
-            for data_type in ['v', 'v_err', 'vd', 'vd_err', 'flux', 'flux_err']
+            for data_type in
+            ['v', 'v_err', 'vd', 'vd_err', 'flux', 'flux_err']
         }
         for name in sps[10][10].keys()
     }
+    # TODO: not just 42, 42
     for i, j in itertools.product(range(42), range(42)):
         if sps[i][j] is not None:
             data = get_line_info(sps[i][j], vac_wave=vac_wave)
@@ -137,10 +139,15 @@ class MaNGALinesResult:
         else:
             return lr
 
-    def get_surface_brightness(self, l):
+    def get_surface_brightness(self, l, with_error=False):
         # in erg/s/kpc^2
-        return self.res[l]['flux'] * 4 * np.pi / (np.deg2rad(
-            0.5 / 3600)**2) * (3.0856776e21)**2 * 1e-17
+        SB = self.res[l]['flux'] * 4 * np.pi / (np.deg2rad(0.5 / 3600)**
+                                                2) * (3.0856776e21)**2 * 1e-17
+        if with_error:
+            err = self.res[l]['flux_err'] * 4 * np.pi / (np.deg2rad(
+                0.5 / 3600)**2) * (3.0856776e21)**2 * 1e-17
+            return SB, err
+        return SB
 
     def draw_line_ratio(self, l1, l2, log=False, *arg, **kwarg):
         l1 = to_list(l1)
