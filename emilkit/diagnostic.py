@@ -122,11 +122,11 @@ class OIBPT:
 
 
 class SMB:
-    # Zanin+1997
+    # Zanin+1999
     # https://articles.adsabs.harvard.edu/full/1999ASPC..188..231Z Figure 4
 
     def __init__(self):
-        data_path = f'{FILE_PATH}/data/Zanin+1997_fig4'
+        data_path = f'{FILE_PATH}/data/Zanin+1999_fig4'
         self.data = {}
         for n in ['HH', 'HII', 'PN_left', 'PN_R', 'SNR']:
             self.data[n] = pd.read_csv(f'{data_path}/{n}.csv', index_col=0)
@@ -137,8 +137,8 @@ class SMB:
              x_max=2.4,
              y_min=-1.0,
              y_max=1.3,
-             xlabel=r'$\log$ H$\alpha$ / [NII] 6548,6583',
-             ylabel=r'$\log$ H$\alpha$ / [SII] 6717,6731'):
+             xlabel=r'$\log$ H$\alpha$ / [SII] 6717,6731',
+             ylabel=r'$\log$ H$\alpha$ / [NII] 6548,6583'):
         if ax is None:
             ax = plt.gca()
 
