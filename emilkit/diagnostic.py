@@ -27,7 +27,7 @@ class NIIBPT:
 
         xx = np.linspace(x_min, 0.05 - EPS)
         ax.plot(xx, self.K03(xx), '--k', label='Kauffmann+03')
-        xx = np.linspace(-1.2, 0.47 - EPS)
+        xx = np.linspace(x_min, 0.47 - EPS)
         ax.plot(xx, self.K01(xx), '-.k', label='Kewley+01')
         ax.legend()
         ax.set_xlim(x_min, x_max)
@@ -37,8 +37,21 @@ class NIIBPT:
 
         return ax
 
-    def judge(self):
-        pass
+    def judge(self, x, y):
+        '''
+        SF: 1
+        Composite: 2
+        AGN: 3
+        '''
+        y03 = self.K03(x)
+        y01 = self.K01(x)
+
+        res = np.zeros_like(x)
+        res[(y < y03) & (y < y01) & (x < 0.05)] = 1
+        res[((y > y03) | (x > 0.05)) & ((y < y01) | (x < 0.47))] = 2
+        res[(y > y01) | (x > 0.47)] = 3
+
+        return res
 
     def K03(self, X):
         return 0.61 / (X - 0.05) + 1.3
@@ -154,7 +167,6 @@ class SMB:
         ax.plot(self.data['PN_left']['X'], self.data['PN_left']['Y'], '-k')
         ax.plot(self.data['PN_R']['X'], self.data['PN_R']['Y'], '-k')
         ax.text(1.3, 0.45, 'PN')
-
 
         ax.set_xlim(x_min, x_max)
         ax.set_ylim(y_min, y_max)

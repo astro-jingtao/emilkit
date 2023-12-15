@@ -52,6 +52,7 @@ def imshow(data,
     fig.colorbar(im, ax=ax, cax=cax, extend=extend)
     fig.sca(ax)  # 把当前 axis 设为 ax
 
+
 def get_seg_cmap(bins, under=None, over=None, colors=None):
     """
     Get a colormap and norm for a given set of bins
@@ -83,7 +84,11 @@ def get_seg_cmap(bins, under=None, over=None, colors=None):
 
     return cmap, norm
 
+# TODO: support both ij and xy
 def plot_polygon(pts, ax=None, *arg, **kwarg):
+    '''
+    the order is j, i or x, y
+    '''
     if ax is None:
         ax = plt.gca()
     pts = np.vstack((pts, pts[:1]))
@@ -92,3 +97,14 @@ def plot_polygon(pts, ax=None, *arg, **kwarg):
     path = Path(pts, codes)
     patch = patches.PathPatch(path, *arg, **kwarg)
     ax.add_patch(patch)
+
+
+def is_in_polygon(x, y, pts):
+    '''
+    the order is i, j or y, x
+    '''
+    x_shape = x.shape
+    # y_shape = y.shape
+    x = x.flatten()
+    y = y.flatten()
+    return Path(pts).contains_points(np.c_[x, y], radius=-0.1).reshape(x_shape)

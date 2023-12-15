@@ -116,10 +116,19 @@ def get_line_info_all(sps, vac_wave=False):
     return res
 
 
-class MaNGALinesResult:
+class IFULineMap:
 
-    def __init__(self, res):
+    def __init__(self, res, pixel_scale):
+        '''
+        res = {
+                '{line}':
+                {'v', 'v_err', 'vd', 'vd_err', 'flux: 1e-17 erg/cm^2/s/A', 'flux_err: 1e-17 erg/cm^2/s/A'}
+            }
+
+        pixel_scale: in unit of arcsec
+        '''
         self.res = res
+        self.pixel_scale = pixel_scale
 
     def get_line_ratio(self, l1, l2, log=False, with_error=False):
         l1 = to_list(l1)
@@ -140,12 +149,12 @@ class MaNGALinesResult:
             return lr
 
     def get_surface_brightness(self, l, with_error=False):
-        # in erg/s/kpc^2
-        SB = self.res[l]['flux'] * 4 * np.pi / (np.deg2rad(0.5 / 3600)**
-                                                2) * (3.0856776e21)**2 * 1e-17
+        # SB in erg/s/kpc^2
+        SB = self.res[l]['flux'] * 4 * np.pi / (np.deg2rad(
+            self.pixel_scale / 3600)**2) * (3.0856776e21)**2 * 1e-17
         if with_error:
             err = self.res[l]['flux_err'] * 4 * np.pi / (np.deg2rad(
-                0.5 / 3600)**2) * (3.0856776e21)**2 * 1e-17
+                self.pixel_scale / 3600)**2) * (3.0856776e21)**2 * 1e-17
             return SB, err
         return SB
 
